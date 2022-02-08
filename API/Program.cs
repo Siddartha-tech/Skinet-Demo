@@ -1,3 +1,4 @@
+using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repository;
@@ -25,8 +26,10 @@ var configuration = builder.Configuration;
 //                 loggingBuilder.AddFile(config);
 // #endif
             });
+            services.AddAutoMapper(typeof(MappingProfiles));
     services.AddDbContext<StoreContext>(x => x.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
     services.AddScoped<IProductRepository, ProductRepository>();
+    services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 }
 
 var app = builder.Build();
@@ -47,6 +50,8 @@ using (var scope = app.Services.CreateScope())
     }
 
     app.UseHttpsRedirection();
+
+    app.UseStaticFiles();
 
     app.UseAuthorization();
 
